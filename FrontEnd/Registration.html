@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+</head>
+<body>
+
+<h2>Register</h2>
+
+<form id="registrationForm">
+    <label for="full_name">Full Name:</label>
+    <input type="text" id="full_name" name="full_name" required><br><br>
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required><br><br>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required><br><br>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <label for="confirm_password">Confirm Password:</label>
+    <input type="password" id="confirm_password" name="confirm_password" required><br><br>
+
+    <label for="phone_number">Phone Number:</label>
+    <input type="text" id="phone_number" name="phone_number" required><br><br>
+
+    <button type="submit">Register</button>
+</form>
+
+<!-- JavaScript -->
+<script>
+    document.getElementById('registrationForm').addEventListener('submit', async function (event) {
+        event.preventDefault();  // Prevent form from submitting normally
+
+        // Collect the form data
+        const fullName = document.getElementById('full_name').value;
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+        const phoneNumber = document.getElementById('phone_number').value;
+
+        // Simple validation to check if fields are empty
+        if (!fullName || !email || !password || !confirmPassword || !phoneNumber || !username) {
+            alert("All fields are required.");
+            return;
+        }
+
+        // Check if password and confirm password match
+        if (password !== confirmPassword) {
+            alert("Passwords do not match.");
+            return;
+        }
+
+        // Prepare the data to be sent in the POST request
+        const formData = {
+            full_name: fullName,
+            username: username,
+            email: email,
+            password: password,
+            confirm_password: confirmPassword,
+            phone_number: phoneNumber
+        };
+
+        try {
+            // Send POST request to the backend
+            const response = await fetch('http://localhost:8000/auth/api/register/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                // Handle success
+                alert("Registration successful!");
+                window.location.href = '/login'; // Redirect to login or verification page
+            } else {
+                // Handle failure (e.g., show error message from the backend)
+                const errorData = await response.json();
+                alert("Error: " + JSON.stringify(errorData));
+            }
+        } catch (error) {
+            console.error('Error during registration:', error);
+            alert("There was an error registering. Please try again.");
+        }
+    });
+</script>
+
+</body>
+</html>
